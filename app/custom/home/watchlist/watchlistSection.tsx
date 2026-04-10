@@ -49,7 +49,9 @@ const WatchlistSection: React.FC<WatchlistSectionProps> = ({
       .finally(() => setLoading(false));
   }, [listId, token]);
 
-  console.log("Watchlist items:", items);
+  const handleRemoveItem = (tmdb_id: number) => {
+    setItems((prev) => prev.filter((item) => item.tmdb_id !== tmdb_id));
+  };
 
   return (
     <div className="flex flex-col w-full">
@@ -112,6 +114,7 @@ const WatchlistSection: React.FC<WatchlistSectionProps> = ({
                       photo_url={item.poster_url}
                       token={token}
                       lists={lists}
+                      onRemoveBookmark={handleRemoveItem}
                     />
                   </div>
                 </RatingDialog>

@@ -23,6 +23,7 @@ interface BookmarkButtonProps {
   poster_url: string;
   lists: ListItem[];
   token: string;
+  onRemove?: (tmdb_id: number) => void;
 }
 
 const BookmarkButton = ({
@@ -32,6 +33,7 @@ const BookmarkButton = ({
   poster_url,
   lists,
   token,
+  onRemove,
 }: BookmarkButtonProps) => {
   const { addBookmark, removeBookmark, getListId } = useBookmarkStore();
   const savedTo = getListId(tmdb_id);
@@ -74,6 +76,7 @@ const BookmarkButton = ({
   const handleRemove = async () => {
     const prevListId = savedTo;
     removeBookmark(tmdb_id);
+    if (onRemove) onRemove(tmdb_id);
     try {
       const response = await fetch(`/api/list/items`, {
         method: "DELETE",

@@ -19,6 +19,7 @@ type FeedItemProps = {
   photo_url?: string;
   token: string;
   lists: ListItem[];
+  onRemoveBookmark?: (tmdb_id: number) => void;
 };
 
 const TV_GENRE_MAP: { [key: number]: string } = {
@@ -40,13 +41,14 @@ const FeedCard = ({
   photo_url,
   token,
   lists,
+  onRemoveBookmark,
 }: FeedItemProps) => {
   return (
     <div className="font-figtree cursor-pointer flex flex-col justify-center items-center rounded-xl overflow-hidden w-[250px] hover:bg-zinc-50 hover:scale-102 transition">
       <div>
         <div className="relative">
           <div className="absolute top-2 right-2">
-            <BookmarkButton tmdb_id={tmdb_id} title={title} genre_ids={genre_ids} poster_url={photo_url ?? ""} lists={lists} token={token} />
+            <BookmarkButton tmdb_id={tmdb_id} title={title} genre_ids={genre_ids} poster_url={photo_url ?? ""} lists={lists} token={token} onRemove={onRemoveBookmark} />
           </div>
           <Image
             className="rounded-t-xl object-cover rounded-lg"
