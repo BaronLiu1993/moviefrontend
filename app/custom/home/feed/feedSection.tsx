@@ -29,22 +29,36 @@ interface FeedSectionProps {
   initialFeed: Feed;
   token: string;
   lists: ListItem[];
+  searchQuery?: string;
 }
 
-const FeedSection: React.FC<FeedSectionProps> = ({ initialFeed, token, lists }) => {
+const FeedSection: React.FC<FeedSectionProps> = ({ initialFeed, token, lists, searchQuery }) => {
   const [items, setItems] = useState<FeedItem[]>(initialFeed.films);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(initialFeed.hasMore);
   const loadingRef = useRef(false);
   const pageRef = useRef(2);
   const sentinelRef = useRef<HTMLDivElement>(null);
+  const searchRef = useRef(searchQuery);
+
+  useEffect(() => {
+    if (searchRef.current === searchQuery) return;
+    searchRef.current = searchQuery;
+    pageRef.current = 1;
+    setItems([]);
+    setHasMore(true);
+    loadingRef.current = false;
+  }, [searchQuery]);
 
   const loadMore = useCallback(async () => {
     if (loadingRef.current) return;
     loadingRef.current = true;
     setLoading(true);
     try {
-      const res = await fetch(`/api/feed?page=${pageRef.current}&pageSize=40`, {
+      const url = searchRef.current
+        ? `/api/feed/search?q=${encodeURIComponent(searchRef.current)}&page=${pageRef.current}&pageSize=40`
+        : `/api/feed?page=${pageRef.current}&pageSize=40`;
+      const res = await fetch(url, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -62,7 +76,7 @@ const FeedSection: React.FC<FeedSectionProps> = ({ initialFeed, token, lists }) 
       loadingRef.current = false;
       setLoading(false);
     }
-  }, []);
+  }, [token]);
 
   useEffect(() => {
     if (!hasMore) return;
