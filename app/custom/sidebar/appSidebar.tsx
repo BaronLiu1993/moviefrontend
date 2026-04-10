@@ -1,6 +1,6 @@
 "use client";
 
-import { Home, Bookmark, TrendingUp, Settings, List, Film } from "lucide-react";
+import { Home, Bookmark, TrendingUp, Settings, List, Film, LayoutDashboard } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -14,7 +14,7 @@ import {
 
 const menuItems = [
   { title: "Home", icon: <Home className="!size-8 stroke-[1.5px]" />, href: "/home" },
-  { title: "Trending", icon: <Film className="!size-8 stroke-[1.5px]" />, href: "/trending" },
+  { title: "Trending", icon: <LayoutDashboard className="!size-8 stroke-[1.5px]" />, href: "/trending" },
   { title: "Bookmarks", icon: <Bookmark className="!size-8 stroke-[1.5px]" />, href: "/bookmarks" },
   { title: "Settings", icon: <Settings className="!size-8 stroke-[1.5px]" />, href: "/settings" },
 ];
