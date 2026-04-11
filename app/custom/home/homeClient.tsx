@@ -1,10 +1,12 @@
-
 "use client";
 
 import React, { useState } from "react";
 import SearchBar from "./search/searchBar";
 import FeedSection from "./feed/feedSection";
 import WatchlistSection from "./watchlist/watchlistSection";
+import AppSidebar from "../sidebar/appSidebar";
+import { CreatePanelProvider, useCreatePanel } from "../sidebar/createPanelContext";
+import { SidebarInset } from "@/components/ui/sidebar";
 import { Badge } from "@/components/ui/badge";
 import { List, Plus } from "lucide-react";
 
@@ -21,7 +23,7 @@ type Feed = {
   hasMore: boolean;
   page: number;
   pageSize: number;
-}
+};
 
 type ListItem = {
   list_id: string;
@@ -50,7 +52,8 @@ interface HomeClientProps {
   user: User;
 }
 
-const HomeClient: React.FC<HomeClientProps> = ({ feed, list, token, user }) => {
+function HomeInner({ feed, list, token, user }: HomeClientProps) {
+  const { open } = useCreatePanel();
   const [activeTab, setActiveTab] = useState<string>("feed");
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -60,21 +63,13 @@ const HomeClient: React.FC<HomeClientProps> = ({ feed, list, token, user }) => {
   };
 
   return (
-    <div className="font-figtree">
-      <div className="sticky top-0 z-10 bg-background">
-        <SearchBar onSearch={handleSearch} />
-      </div>
-      <div className="flex gap-3 px-20 pb-4">
-        <Badge className="rounded-md px-4 py-2 text-sm cursor-pointer">
-          <Plus className="w-4 h-4" />
-          Add Friends
-        </Badge>
-        <Badge className="rounded-md px-4 py-2 text-sm cursor-pointer">
-          <List className="w-4 h-4" />
-          Create New List
-        </Badge>
-      </div>
-      
+    <>
+    <AppSidebar />
+    <SidebarInset
+      className="transition-[margin] duration-500 ease-in-out font-figtree"
+      style={{ marginLeft: open ? "calc(20rem + var(--sidebar-width))" : "var(--sidebar-width)" }}
+    >
+      <SearchBar onSearch={handleSearch} />
       <div className="flex gap-4 w-full px-20 py-4">
         <button
           onClick={() => setActiveTab("feed")}
@@ -93,7 +88,12 @@ const HomeClient: React.FC<HomeClientProps> = ({ feed, list, token, user }) => {
         ))}
       </div>
       {activeTab === "feed" ? (
-        <FeedSection initialFeed={feed} token={token} lists={list} searchQuery={searchQuery} />
+        <FeedSection
+          initialFeed={feed}
+          token={token}
+          lists={list}
+          searchQuery={searchQuery}
+        />
       ) : (
         <WatchlistSection
           name={list.find((l) => l.list_id === activeTab)?.name ?? ""}
@@ -102,7 +102,16 @@ const HomeClient: React.FC<HomeClientProps> = ({ feed, list, token, user }) => {
           lists={list}
         />
       )}
-    </div>
+    </SidebarInset>
+    </>
+  );
+}
+
+const HomeClient: React.FC<HomeClientProps> = (props) => {
+  return (
+    <CreatePanelProvider token={props.token}>
+      <HomeInner {...props} />
+    </CreatePanelProvider>
   );
 };
 

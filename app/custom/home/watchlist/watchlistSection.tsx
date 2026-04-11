@@ -35,7 +35,7 @@ const WatchlistSection: React.FC<WatchlistSectionProps> = ({
 }) => {
   const [items, setItems] = useState<FeedItem[]>([]);
   const [loading, setLoading] = useState(true);
-
+  
   useEffect(() => {
     setLoading(true);
     fetch(`/api/list/${listId}`, {
