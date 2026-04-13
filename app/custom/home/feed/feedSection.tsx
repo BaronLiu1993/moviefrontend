@@ -40,6 +40,23 @@ const FeedSection: React.FC<FeedSectionProps> = ({ initialFeed, token, lists, se
   const pageRef = useRef(2);
   const sentinelRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef(searchQuery);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [columns, setColumns] = useState(4);
+
+  const MIN_CARD_WIDTH = 220;
+  const GAP = 16;
+
+  useEffect(() => {
+    const node = containerRef.current?.parentElement;
+    if (!node) return;
+    const observer = new ResizeObserver((entries) => {
+      const width = entries[0].contentRect.width;
+      const cols = Math.max(2, Math.floor((width + GAP) / (MIN_CARD_WIDTH + GAP)));
+      setColumns(cols);
+    });
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     if (searchRef.current === searchQuery) return;
@@ -96,7 +113,11 @@ const FeedSection: React.FC<FeedSectionProps> = ({ initialFeed, token, lists, se
 
   return (
     <>
-      <div className="flex flex-wrap gap-4 justify-center mx-auto" style={{ maxWidth: "fit-content" }}>
+      <div
+        ref={containerRef}
+        className="grid gap-4 mt-4 w-full"
+        style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}
+      >
         {items.map((item) => (
           <div key={item.tmdb_id} className="animate-fade-in">
             <RatingDialog title={item.title} tmdb_id={item.tmdb_id} genre_ids={item.genre_ids} release_year={item.release_year} token={token}>
@@ -116,8 +137,8 @@ const FeedSection: React.FC<FeedSectionProps> = ({ initialFeed, token, lists, se
         ))}
         {loading &&
           Array.from({ length: 8 }).map((_, i) => (
-            <div key={`skeleton-${i}`} className="flex flex-col rounded-xl overflow-hidden w-[250px]">
-              <Skeleton className="rounded-lg w-[250px] h-[375px]" />
+            <div key={`skeleton-${i}`} className="flex flex-col rounded-xl overflow-hidden">
+              <Skeleton className="rounded-lg w-full" style={{ aspectRatio: "2/3" }} />
               <div className="p-3 space-y-2">
                 <Skeleton className="h-5 w-3/4" />
                 <Skeleton className="h-4 w-1/4" />

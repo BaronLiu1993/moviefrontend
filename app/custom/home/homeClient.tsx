@@ -57,7 +57,6 @@ function HomeInner({ feed, list, token, user }: HomeClientProps) {
   const { open } = useCreatePanel();
   const [activeTab, setActiveTab] = useState<string>("feed");
   const [searchQuery, setSearchQuery] = useState("");
-
   const handleSearch = (query: string) => {
     setSearchQuery(query);
     if (query) setActiveTab("feed");
@@ -67,35 +66,43 @@ function HomeInner({ feed, list, token, user }: HomeClientProps) {
     <>
     <AppSidebar />
     <SidebarInset
-      className="transition-[margin] duration-500 ease-in-out font-figtree min-w-0 overflow-hidden"
-      style={{ marginLeft: open ? "calc(20rem + var(--sidebar-width))" : "var(--sidebar-width)" }}
+      className="transition-[margin,width] duration-500 ease-in-out font-figtree min-w-0 px-8 !w-auto"
+      style={{
+        marginLeft: open ? "calc(20rem + var(--sidebar-width))" : "var(--sidebar-width)",
+        width: open ? "calc(100vw - 20rem - var(--sidebar-width) - var(--sidebar-width))" : "calc(100vw - var(--sidebar-width) - var(--sidebar-width))",
+      }}
     >
-      <SearchBar onSearch={handleSearch} />
-      <div className="flex gap-4 w-full px-20 py-4">
-        <button
-          onClick={() => setActiveTab("feed")}
-          className={`text-lg font-medium ${activeTab === "feed" ? "underline decoration-2 underline-offset-8" : "text-muted-foreground"}`}
-        >
-          Feed
-        </button>
-        {list.map((l) => (
-          <button
-            key={l.list_id}
-            onClick={() => setActiveTab(l.list_id)}
-            className={`text-lg font-medium ${activeTab === l.list_id ? "underline decoration-2 underline-offset-8" : "text-muted-foreground"}`}
-          >
-            {l.name}
-          </button>
-        ))}
+      <div className="sticky top-0 z-10 bg-background">
+        <SearchBar onSearch={handleSearch} />
       </div>
-      {activeTab === "feed" ? (
-        <FeedSection
-          initialFeed={feed}
-          token={token}
-          lists={list}
-          searchQuery={searchQuery}
-        />
-      ) : (
+      <div className="w-full min-w-0">
+        <div className="flex gap-4 w-full py-4">
+          <button
+            onClick={() => setActiveTab("feed")}
+            className={`text-lg font-medium ${activeTab === "feed" ? "underline decoration-2 underline-offset-8" : "text-muted-foreground"}`}
+          >
+            Feed
+          </button>
+          {list.map((l) => (
+            <button
+              key={l.list_id}
+              onClick={() => setActiveTab(l.list_id)}
+              className={`text-lg font-medium ${activeTab === l.list_id ? "underline decoration-2 underline-offset-8" : "text-muted-foreground"}`}
+            >
+              {l.name}
+            </button>
+          ))}
+        </div>
+        {activeTab === "feed" && (
+          <FeedSection
+            initialFeed={feed}
+            token={token}
+            lists={list}
+            searchQuery={searchQuery}
+          />
+        )}
+      </div>
+      {activeTab !== "feed" && (
         <WatchlistSection
           name={list.find((l) => l.list_id === activeTab)?.name ?? ""}
           listId={activeTab}
@@ -108,7 +115,7 @@ function HomeInner({ feed, list, token, user }: HomeClientProps) {
     </SidebarInset>
     </>
   );
-}
+} 
 
 const HomeClient: React.FC<HomeClientProps> = (props) => {
   return (
