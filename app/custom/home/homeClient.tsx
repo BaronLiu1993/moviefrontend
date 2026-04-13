@@ -79,7 +79,7 @@ function HomeInner({ feed, list, token, user }: HomeClientProps) {
         <div className="flex gap-4 w-full py-4">
           <button
             onClick={() => setActiveTab("feed")}
-            className={`text-lg font-medium ${activeTab === "feed" ? "underline decoration-2 underline-offset-8" : "text-muted-foreground"}`}
+            className={`text-md font-medium ${activeTab === "feed" ? "underline decoration-2 underline-offset-8" : "text-muted-foreground"}`}
           >
             Feed
           </button>
@@ -87,7 +87,7 @@ function HomeInner({ feed, list, token, user }: HomeClientProps) {
             <button
               key={l.list_id}
               onClick={() => setActiveTab(l.list_id)}
-              className={`text-lg font-medium ${activeTab === l.list_id ? "underline decoration-2 underline-offset-8" : "text-muted-foreground"}`}
+              className={`text-md font-medium ${activeTab === l.list_id ? "underline decoration-2 underline-offset-8" : "text-muted-foreground"}`}
             >
               {l.name}
             </button>
@@ -110,6 +110,7 @@ function HomeInner({ feed, list, token, user }: HomeClientProps) {
           lists={list}
           createdAt={list.find((l) => l.list_id === activeTab)?.created_at ?? ""}
           imageUrl={list.find((l) => l.list_id === activeTab)?.image_url}
+          isDefault={list.find((l) => l.list_id === activeTab)?.is_default ?? false}
         />
       )}
     </SidebarInset>

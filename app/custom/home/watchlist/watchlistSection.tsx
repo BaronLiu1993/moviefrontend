@@ -5,8 +5,8 @@ import FeedCard from "../cards/feedCard";
 import RatingDialog from "../rating/ratingDialog";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Link, Send } from "lucide-react";
-import EditListDialog from "./components/editListDialog";
+
+import EditListDialog, { InviteCollabDialog } from "./components/editListDialog";
 
 type FeedItem = {
   tmdb_id: number;
@@ -28,6 +28,7 @@ interface WatchlistSectionProps {
   lists: ListItem[];
   createdAt: string;
   imageUrl?: string;
+  isDefault: boolean;
 }
 
 const WatchlistSection: React.FC<WatchlistSectionProps> = ({
@@ -37,6 +38,7 @@ const WatchlistSection: React.FC<WatchlistSectionProps> = ({
   lists,
   createdAt,
   imageUrl,
+  isDefault,
 }) => {
   const [items, setItems] = useState<FeedItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -87,10 +89,7 @@ const WatchlistSection: React.FC<WatchlistSectionProps> = ({
         </div>
         <div className = "flex gap-2 mt-6">
           <Separator orientation="vertical" className="h-5" />
-          <button className="group px-4 py-2 text-sm text-zinc-500 transition cursor-pointer flex items-center gap-1 rounded-md border-2 hover:border-pink-700 hover:text-white hover:bg-pink-700">
-            <Link className="w-4 h-4 text-pink-700 group-hover:text-white transition" />
-            Invite Collaborators
-          </button>
+          {!isDefault && <InviteCollabDialog listId={listId} token={token} />}
           <EditListDialog name={name} listId={listId} token={token} />   
         </div>
       </div>
